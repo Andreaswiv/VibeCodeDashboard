@@ -17,7 +17,21 @@ src = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "data" / "VB_Coding_JuS
 wb = openpyxl.load_workbook(src, data_only=True)
 rows = list(wb["Projects"].iter_rows(values_only=True))
 header, body = rows[0], rows[1:]
-projects = [dict(zip(header, r)) for r in body if r and r[0]]
+# Only the columns the prioritisation actually uses are embedded.
+# (Description, location, beneficiaries, technology, duration, etc. are not relevant to Team 1;
+#  Assessment_Notes is the same placeholder text for every project, so it carries no evidence.)
+KEEP = [
+    "Project_ID", "Project_Title", "Project_Status", "Primary_Sector",
+    "Primary_Policy_Goal", "Additional_Policy_Goals", "Estimated_Budget_EUR_Million", "Key_Risk",
+    "Overall_Score_0_to_5",
+    "Economic_Avg_0_to_5", "Financial_Avg_0_to_5", "Health_Avg_0_to_5", "Environmental_Avg_0_to_5",
+    "Technological_Avg_0_to_5", "Social_Civil_Rights_Avg_0_to_5", "Institutional_Avg_0_to_5",
+    "Territorial_Avg_0_to_5", "Educational_Cultural_Avg_0_to_5", "Generational_Avg_0_to_5",
+]
+missing = [k for k in KEEP if k not in header]
+if missing:
+    sys.exit(f"Dataset is missing expected columns: {missing}")
+projects = [{k: row[k] for k in KEEP} for row in (dict(zip(header, r)) for r in body if r and r[0])]
 
 payload = "window.PROJECTS = " + json.dumps(projects, ensure_ascii=False).replace("</", "<\\/") + ";"
 html_path = ROOT / "index.html"
