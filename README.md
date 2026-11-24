@@ -8,13 +8,15 @@ Open `index.html` in any browser (double-click). It is one self-contained file a
 If the dataset changes, put the new `.xlsx` in `data/` and re-embed it:
 
 ```bash
+pip install openpyxl   # once
 python3 tools/build_data.py
 ```
 
+Only the columns used for prioritisation are embedded (ID, title, status, sector, policy goals, budget, key risk, overall + ten dimension scores). Description, location, beneficiaries, technology, duration and the assessment note (identical placeholder for every project) are left out on purpose.
+
 ## What it does
-- **Review queue**: all 250 projects grouped into *Review now* (top 10), *Review later* (ranks 11–50), *Not ready* (rest) and *Completed* (65, at the bottom). Filters for group, status, sector, region, policy goal, key risk, red flag, min. score and max. budget. Click a row for the full explanation. You can export the filtered list to CSV.
-- **Insights**: the "high score ≠ top priority" examples, overall vs adjusted score, red-flag counts, and review group by status.
-- **Method & rules**: the team rules in plain language, plus live controls for what-if scenarios (penalty, thresholds, which flags and risks count, group sizes).
+- **Review queue**: all 250 projects grouped into *Review now* (top 10), *Review later* (ranks 11–50), *Not ready* (rest) and *Completed* (65, at the bottom). Filters for group, status, sector, policy goal, key risk, red flag, min. score and max. budget. Click a row for the full explanation. You can export the filtered list to CSV.
+- **Method & rules**: live controls for what-if scenarios (penalty, thresholds, which flags and risks count, group sizes), the "high score ≠ top priority" examples (update live with the rules), and the team rules in plain language.
 
 ## Scoring (team defaults, agreed in Meeting 1)
 `adjusted = overall score − 0.5 × number of red flags`
